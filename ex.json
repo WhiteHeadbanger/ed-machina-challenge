@@ -1,0 +1,44 @@
+{
+    "name":"Sebastiana Peralta",
+    "email":"xxxxxxx@xxxx.com",
+    "address":"Calle Falsa 1234",
+    "phone":11111111,
+    "inscription_year":2022,
+    "careers":[
+        {
+            "name":"Ingenieria en Sistemas",
+            "courses":[
+                {
+                    "name":"Analisis Matematico I",
+                    "course_time":60,
+                    "course_times_quantity":1
+                },
+                {
+                    "name":"Fisica II",
+                    "course_time":240,
+                    "course_times_quantity":1
+                },
+                {
+                    "name":"Sistemas Operativos",
+                    "course_time":120,
+                    "course_times_quantity":5
+                }
+            ]
+        },
+        {
+            "name":"Ingenieria en Informatica",
+            "courses":[
+                {
+                    "name":"Electronica I",
+                    "course_time":100,
+                    "course_times_quantity":2
+                },
+                {
+                    "name":"Laboratorio I",
+                    "course_time":320,
+                    "course_times_quantity":4
+                }
+            ]
+        }
+    ]
+}
