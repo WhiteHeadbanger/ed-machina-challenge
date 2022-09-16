@@ -6,7 +6,7 @@ class CareerModel(Base):
     __tablename__ = "career"
     
     id = Column(Integer, Identity(), primary_key=True)
-    name = Column(String(255), nullable=False)
+    career_name = Column(String(255), nullable=False)
     
     reference = relationship("RegisterModel", back_populates="career")
 

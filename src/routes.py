@@ -1,20 +1,25 @@
 from fastapi import APIRouter, status
-
-from models.database import SessionLocal
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlalchemy import paginate
 
 from models.lead_model import LeadModel
 from models.course_model import CourseModel
 from models.career_model import CareerModel
 from models.register_model import RegisterModel
 
+from models.database import SessionLocal
+
 from schemas.lead import Lead
+
+from utils import get_response_from_query
+
 
 db = SessionLocal()
 
 router = APIRouter()
 
 # Show all leads, paginated.
-@router.get('/')
+@router.get('/leads', response_model = Page[Lead])
 def index():
     pass
 
@@ -30,7 +35,7 @@ def create_lead(lead: Lead):
     careers = lead.careers
 
     db_lead = LeadModel(
-        name=name,
+        lead_name=name,
         email=email,
         address=address,
         phone=phone,
@@ -47,7 +52,7 @@ def create_lead(lead: Lead):
     for career in careers_data:
         courses_data = career.courses
         
-        db_career = CareerModel(name = career.name)
+        db_career = CareerModel(career_name = career.name)
         db.add(db_career)
         db.commit()
         db.refresh(db_career)
@@ -55,7 +60,7 @@ def create_lead(lead: Lead):
         id_career = db_career.id
 
         for course in courses_data:
-            db_course = CourseModel(name = course.name, course_time = course.course_time)
+            db_course = CourseModel(course_name = course.name, course_time = course.course_time)
             db.add(db_course)
             db.commit()
             db.refresh(db_course)
@@ -68,11 +73,27 @@ def create_lead(lead: Lead):
             db.commit()
             db.refresh(db_register)
 
-    return {"Success": True, "Tracer_id": f"{id_lead}"}
+    return {"Success": True, "Trace_id": f"{id_lead}"}
     
 
 # Pass an ID and get a result
-# Query params
-@router.get('/lead/{register_id}')
-def show_lead():
-    pass
+@router.get('/leads/{trace_id}')
+def get_lead(trace_id: int):
+    query = db.query(
+        LeadModel.lead_name,
+        LeadModel.email,
+        LeadModel.address,
+        LeadModel.phone,
+        LeadModel.inscription_year,
+        CareerModel.career_name,
+        CourseModel.course_name,
+        CourseModel.course_time,
+        RegisterModel.course_times_quantity
+    ).select_from(LeadModel).join(RegisterModel).join(CareerModel).join(CourseModel).filter(RegisterModel.id_lead == trace_id).all()
+
+    
+    result = get_response_from_query(query)
+            
+    return result
+
+   

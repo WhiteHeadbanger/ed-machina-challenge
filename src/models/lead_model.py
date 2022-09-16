@@ -6,7 +6,7 @@ class LeadModel(Base):
     __tablename__ = "lead"
     
     id = Column(Integer, Identity(), primary_key = True)
-    name = Column(String(255), nullable = False)
+    lead_name = Column(String(255), nullable = False)
     email = Column(String(255), nullable = False)
     address = Column(String(255), nullable = False)
     phone = Column(Integer, nullable = False)
