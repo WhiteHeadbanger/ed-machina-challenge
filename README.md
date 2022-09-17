@@ -76,4 +76,4 @@ Returns the loaded Leads, paginated.
 }
 ```
 
-If a get request is made to /leads/<id>, you should be able to see a similar response to the request.
+If a get request is made to /leads/[id], you should be able to see a similar response to the request.
