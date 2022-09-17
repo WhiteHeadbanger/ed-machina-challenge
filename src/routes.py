@@ -1,6 +1,8 @@
 from fastapi import APIRouter, status
-from fastapi_pagination import Page
+from fastapi_pagination import Page, LimitOffsetPage
 from fastapi_pagination.ext.sqlalchemy import paginate
+
+from sqlalchemy import func
 
 from models.lead_model import LeadModel
 from models.course_model import CourseModel
@@ -18,16 +20,36 @@ db = SessionLocal()
 
 router = APIRouter()
 
+
+
 # Show all leads, paginated.
+# No logro que funcione
 @router.get('/leads', response_model = Page[Lead])
+@router.get('/leads/limit-offset', response_model = LimitOffsetPage[Lead])
 def index():
-    pass
+    """ query = db.query(
+        LeadModel.lead_name,
+        LeadModel.email,
+        LeadModel.address,
+        LeadModel.phone,
+        LeadModel.inscription_year,
+        CareerModel.career_name,
+        CourseModel.course_name,
+        CourseModel.course_time,
+        RegisterModel.course_times_quantity
+    ).select_from(LeadModel).join(RegisterModel).join(CareerModel).join(CourseModel).all() """
+
+   # query = db.query(LeadModel).all()
+
+    #result = get_response_from_query(query)
+
+    return paginate(db.query(LeadModel.lead_name).all())
 
 # Create a new lead
 @router.post('/create', response_model=Lead, status_code=status.HTTP_201_CREATED)
 def create_lead(lead: Lead):
     # Get request body
-    name = lead.name,
+    name = lead.lead_name,
     email = lead.email,
     address = lead.address,
     phone = lead.phone,
@@ -52,7 +74,7 @@ def create_lead(lead: Lead):
     for career in careers_data:
         courses_data = career.courses
         
-        db_career = CareerModel(career_name = career.name)
+        db_career = CareerModel(career_name = career.career_name)
         db.add(db_career)
         db.commit()
         db.refresh(db_career)
@@ -60,7 +82,7 @@ def create_lead(lead: Lead):
         id_career = db_career.id
 
         for course in courses_data:
-            db_course = CourseModel(course_name = course.name, course_time = course.course_time)
+            db_course = CourseModel(course_name = course.course_name, course_time = course.course_time)
             db.add(db_course)
             db.commit()
             db.refresh(db_course)

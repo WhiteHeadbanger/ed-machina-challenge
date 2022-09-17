@@ -4,7 +4,7 @@ from schemas.course import Course
 from typing import Union, Dict, List
 
 class Career(BaseModel):
-    name: str
+    career_name: str
     courses: Union[List[Course], None]
 
     class Config:

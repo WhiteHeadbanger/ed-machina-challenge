@@ -4,7 +4,7 @@ from schemas.career import Career
 
 
 class Lead(BaseModel):
-    name: str
+    lead_name: str
     email: str
     address: str
     phone: int
