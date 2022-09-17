@@ -2,8 +2,6 @@ from fastapi import APIRouter, status
 from fastapi_pagination import Page, LimitOffsetPage
 from fastapi_pagination.ext.sqlalchemy import paginate
 
-from sqlalchemy import func
-
 from models.lead_model import LeadModel
 from models.course_model import CourseModel
 from models.career_model import CareerModel
@@ -22,11 +20,13 @@ router = APIRouter()
 
 
 
-# Show all leads, paginated.
-# No logro que funcione
+
+# No logro que funcione, me da error de que el metodo 'count()' requiere un argumento y no se le provee ninguno. 
 @router.get('/leads', response_model = Page[Lead])
 @router.get('/leads/limit-offset', response_model = LimitOffsetPage[Lead])
 def index():
+    """ Show all leads, paginated. """
+
     """ query = db.query(
         LeadModel.lead_name,
         LeadModel.email,
@@ -43,11 +43,15 @@ def index():
 
     #result = get_response_from_query(query)
 
-    return paginate(db.query(LeadModel.lead_name).all())
+    return paginate(query)
 
-# Create a new lead
+
+# El request se inserta en la db exitosamente, pero el server devuelve Internal Server Error. No se por qué, no encuentro solución.
+# No lo hacía con anterioridad. A veces puede devolver que faltan campos, cuando no es así. Leí en internet que puede ser un bug de FastAPI.
 @router.post('/create', response_model=Lead, status_code=status.HTTP_201_CREATED)
 def create_lead(lead: Lead):
+    """ Creates a new lead """
+
     # Get request body
     name = lead.lead_name,
     email = lead.email,
@@ -98,9 +102,9 @@ def create_lead(lead: Lead):
     return {"Success": True, "Trace_id": f"{id_lead}"}
     
 
-# Pass an ID and get a result
-@router.get('/leads/{trace_id}')
+@router.get('/leads/{trace_id}', status_code=status.HTTP_200_OK)
 def get_lead(trace_id: int):
+    """ Pass an ID and get a result """
     query = db.query(
         LeadModel.lead_name,
         LeadModel.email,
@@ -113,7 +117,7 @@ def get_lead(trace_id: int):
         RegisterModel.course_times_quantity
     ).select_from(LeadModel).join(RegisterModel).join(CareerModel).join(CourseModel).filter(RegisterModel.id_lead == trace_id).all()
 
-    
+    # serializes the query into a response json
     result = get_response_from_query(query)
             
     return result

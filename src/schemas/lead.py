@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict, Union
+from typing import List, Union
 from schemas.career import Career
 
 

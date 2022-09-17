@@ -19,3 +19,8 @@ services:
       - POSTGRES_DB=lead_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
+    volumes:
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
+    driver: local
